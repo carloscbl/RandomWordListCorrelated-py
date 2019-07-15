@@ -3,6 +3,13 @@ import codecs
 
 vocales = "aeiou"#AEIOUÀÁÉÈÍÌÒÓÚÙ
 consonantes = "bcdfghjklmnpqrstvwxyz" #$€Ç
+vocales_map = {
+    "a" : ["A","À","Á"],
+    "e" : ["E","É","È"],
+    "i" : ["I","Í","Ì"],
+    "o" : ["O","Ò","Ó"],
+    "u" : ["U","Ú","Ù"]
+}
 
 def render_matrix(matrix):
     string = ""
@@ -13,7 +20,7 @@ def render_matrix(matrix):
     return string
 
 def gen_sufix(bananas,word):
-    if bananas > 0:
+    if bananas > 1:
         suffixed = word
         for i in range(0,bananas):
             suffixed = get_randomSilaba(suffixed)
@@ -27,6 +34,21 @@ def get_randomWord():
         formacion = get_randomSilaba(formacion)
     return formacion
     
+def randomize_vocals(word):
+    result_word = ""
+    for letter in word:
+        choose = randint(0,3)
+        
+        if letter in vocales_map:
+            if choose == 0:
+                result_word += letter
+            else:
+                result_word += vocales_map[letter][choose-1]
+        else:
+            result_word += letter
+    return result_word
+
+
 def get_randomSilaba(composition):
     silabaSimple = getrandbits(1)
     index = randint(0,len(consonantes)-1)
@@ -48,23 +70,42 @@ def genApostrofes(lines):
 
 def addsuffix(matrix):
     matrix2 = []
+    count = 0
     for lista in matrix:
         list2 = []
+        flag_count = False
         for word in lista:
-            list2.append( gen_sufix( randint(0,3), word ))
+            bananas = randint(0,1)
+            if bananas == 0:
+                bananas = randint(1,3)
+
+            choosed_word = lista[randint(0,len(lista)-1)]
+            new_word = gen_sufix( bananas, choosed_word )
+            if choosed_word in new_word:
+                new_word = randomize_vocals(new_word)
+                flag_count = True
+            list2.append( new_word )
         matrix2.append(list2)
-    return matrix2
+        if flag_count:
+            count+=1 
+
+    print(str(count)+" Total lines with match")
+    return matrix2, count
 
 def main():
     print("Culion")
     total_lines = 512
-    matrix = genApostrofes(total_lines)
+    matrix= genApostrofes(total_lines)
     listaA = render_matrix(matrix)
     #listaB = getrand(total_lines, "Lista B")
     file = codecs.open("lista_allot.txt","w","utf-8-sig")
-    file.write(listaA)
-    file = codecs.open("lista_allot2.txt","w","utf-8-sig")
-    listaB = render_matrix(addsuffix(matrix))
+    file_meta = codecs.open("lista_meta.txt","w","utf-8-sig")
+    file.write("Lista A")
+    file.write(listaA + "\n")
+    matrix2, count = addsuffix(matrix)
+    listaB = render_matrix(matrix2)
+    file_meta.write(str(count)+" Total lines with match")
+    file.write("Lista B")
     file.write(listaB)
 
 if __name__ == "__main__":
