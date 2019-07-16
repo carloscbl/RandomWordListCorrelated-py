@@ -98,7 +98,7 @@ def main():
     matrix= genApostrofes(total_lines)
     listaA = render_matrix(matrix)
     #listaB = getrand(total_lines, "Lista B")
-    file = codecs.open("lista_allot.txt","w","utf-8-sig")
+    file = codecs.open("lista_correlated.txt","w","utf-8-sig")
     file_meta = codecs.open("lista_meta.txt","w","utf-8-sig")
     file.write("Lista A")
     file.write(listaA + "\n")
