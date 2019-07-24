@@ -4,11 +4,11 @@ import codecs
 vocales = "aeiou"#AEIOUÀÁÉÈÍÌÒÓÚÙ
 consonantes = "bcdfghjklmnpqrstvwxyz" #$€Ç
 vocales_map = {
-    "a" : ["A","À","Á"],
-    "e" : ["E","É","È"],
-    "i" : ["I","Í","Ì"],
-    "o" : ["O","Ò","Ó"],
-    "u" : ["U","Ú","Ù"]
+    "a" : ["A"],#,str(0xC1),str(0xC0)],
+    "e" : ["E"],#,str(0xC8),str(0xC9)],
+    "i" : ["I"],#,str(0xCC),str(0xCD)],
+    "o" : ["O"],#,str(0xD3),str(0xD2)],
+    "u" : ["U"]#,str(0xDA),str(0xD9)]
 }
 
 def render_matrix(matrix):
@@ -37,7 +37,7 @@ def get_randomWord():
 def randomize_vocals(word):
     result_word = ""
     for letter in word:
-        choose = randint(0,3)
+        choose = randint(0,1)
         
         if letter in vocales_map:
             if choose == 0:
@@ -98,15 +98,15 @@ def main():
     matrix= genApostrofes(total_lines)
     listaA = render_matrix(matrix)
     #listaB = getrand(total_lines, "Lista B")
-    file = codecs.open("lista_correlated.txt","w","utf-8-sig")
-    file_meta = codecs.open("lista_meta.txt","w","utf-8-sig")
-    file.write("Lista A")
-    file.write(listaA + "\n")
-    matrix2, count = addsuffix(matrix)
-    listaB = render_matrix(matrix2)
-    file_meta.write(str(count)+" Total lines with match")
-    file.write("Lista B")
-    file.write(listaB)
+    with open("lista_correlated.txt","wb") as file:
+        file_meta = codecs.open("lista_meta.txt","w","utf-8-sig")
+        file.write("Lista A".encode('ascii'))
+        file.write((listaA + "\n").encode('ascii'))
+        matrix2, count = addsuffix(matrix)
+        listaB = render_matrix(matrix2)
+        file_meta.write(str(count)+" Total lines with match")
+        file.write("Lista B".encode('ascii'))
+        file.write(listaB.encode('ascii'))
 
 if __name__ == "__main__":
     main()
